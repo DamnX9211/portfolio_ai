@@ -6,6 +6,13 @@ interface Message {
   text: string;
 }
 
+const suggestedQuestions = [
+  "What backend technologies does Rohit use?",
+  "Tell me about Rohit's projects",
+  "What experience does Rohit have?",
+  "What kind of roles is Rohit looking for?",
+];
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -15,7 +22,7 @@ export default function ChatWidget() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage = { role: "user", text: input };
+    const userMessage = { role: "user" as const, text: input };
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
@@ -24,16 +31,16 @@ export default function ChatWidget() {
     try {
       const res = await askAI(input);
 
-      const aiMessage = { role: "ai", text: res.answer };
-      setMessages(prev => [...prev, aiMessage]);
+      const aiMessage = { role: "ai" as const, text: res.answer };
+      setMessages((prev) => [...prev, aiMessage]);
     } catch {
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
-        { role: "ai", text: "Something went wrong." }
-      ])
+        { role: "ai", text: "Something went wrong." },
+      ]);
     }
 
-    setLoading(false)
+    setLoading(false);
   };
 
   return (
@@ -41,24 +48,41 @@ export default function ChatWidget() {
       {/* Button to open chat widget */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-20 right-6 w-80 h-96 bg-black border border-gray-700 rounded-lg flex flex-col"
+        className="fixed bottom-6 right-6 bg-white text-black px-4 py-2 rounded-full shadow-lg hover:bg-gray-100"
       >
         Ask AI
       </button>
 
       {open && (
         <div className="fixed bottom-20 right-6 w-80 h-96 bg-black border border-gray-700 rounded-lg flex flex-col">
-          <div className="p-3 border-b border-gray-700 font-semibold">AI Resume Assistant</div>
+          <div className="p-3 border-b border-gray-700 font-semibold">
+            AI Resume Assistant
+          </div>
 
           <div className="flex-1 overflow-y-auto p-3 space-y-3">
+            {messages.length === 0 && (
+              <div className="space-y-2">
+                <p className="text-sm text-gray-400">Try asking:</p>
+
+                {suggestedQuestions.map((q, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setInput(q)}
+                    className="block text-left text-sm border border-gray-700 px-3 py-2 rounded hover:border-gray-500 w-full"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
             {messages.map((m, i) => (
               <div
                 key={i}
-                className={
+                className={`max-w-[80%] p-2 rounded text-sm ${
                   m.role === "user"
-                    ? "text-right text-blue-300"
-                    : "text-left text-green-300"
-                }
+                    ? "ml-auto bg-white text-black"
+                    : "bg-gray-800 text-gray-200"
+                }`}
               >
                 {m.text}
               </div>
@@ -71,6 +95,9 @@ export default function ChatWidget() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") sendMessage();
+              }}
               placeholder="Ask something..."
               className="flex-1 bg-gray-900 p-2 rounded text-sm outline-none"
             />
@@ -79,14 +106,6 @@ export default function ChatWidget() {
               className="bg-white text-black px-3 rounded"
             >
               Send
-            </button>
-          </div>
-          <div className="text-right">
-            <button
-              onClick={() => setOpen(false)}
-              className="text-sm mt-0.5 p-1 rounded-b-md bg-gray-700 text-gray-400 hover:text-white"
-            >
-              Close
             </button>
           </div>
         </div>
