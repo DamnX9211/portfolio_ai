@@ -4,6 +4,7 @@ import type { ResumeData } from './types/resume'
 
 import Hero from './sections/Hero'
 import Projects from './sections/Projects'
+import ChatWidget from './components/ChatWidget'
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
    <div>
     <Hero about={data.about} />
     <Projects projects={data.projects} />
+    <ChatWidget />
    </div>
   )
 }
