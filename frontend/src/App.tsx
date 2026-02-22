@@ -1,18 +1,31 @@
+import { useState, useEffect } from 'react'
+import { fetchResume } from './services/api'
+import type { ResumeData } from './types/resume'
 
-import './index.css'
+import Hero from './sections/Hero'
+import Projects from './sections/Projects'
+
 
 function App() {
-  
+  const [data, setData] = useState<ResumeData | null>(null)
+
+  useEffect(() => {
+    fetchResume().then(setData)
+  }, [])
+
+  if(!data) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading Portfolio...
+      </div>
+    )
+  }
 
   return (
-    <>
-      <div className="container mx-auto px-4">
-       <p className="text-2xl font-bold text-center mt-10">
-        Hello World! This is a portfolio website built with React and Tailwind CSS. It showcases my projects and skills in web development. Feel free to explore and check out my work!
-      </p>
-      </div>
-      
-    </>
+   <div>
+    <Hero about={data.about} />
+    <Projects projects={data.projects} />
+   </div>
   )
 }
 
