@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from app.database import Base, engine
-from app.models import about, education, experience, skill, project
 from app.routes import resume_routes
 from app.routes import chat_routes
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,7 +10,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 origins = [
     "http://localhost:5173",
-    "https://portfolio-ai-sage-five.vercel.app/",
+    "https://portfolio-ai-sage-five.vercel.app",
 ]
 
 app.add_middleware(

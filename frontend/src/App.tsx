@@ -27,7 +27,7 @@ function App() {
 
   return (
    <div>
-    <Hero about={data.about} />
+    {data?.about && <Hero about={data.about} />}
     <Projects projects={data.projects} />
     <Skills skills={data.skills} />
     <Experience experience={data.experience} />
