@@ -5,24 +5,49 @@ from app.services.resume_service import get_resume_data
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
+def detect_section(question: str):
+    q = question.lower()
+
+    if "project" in q:
+        return "projects"
+    
+    if "skills" in q or "technology" in q:
+        return "skills"
+    
+    if "experience" in q or "work" in q:
+        return "experience"
+    
+    if "education" in q:
+        return "education"
+    
+    return "general"
+
 async def generate_ai_response(question: str, db: Session):
     resume_data = get_resume_data(db)
+    section = detect_section(question)
+    
+    if section == "projects":
+        context = "\n".join([f" - {p.title}: {p.description}" for p in resume_data["projects"]])
 
-    about = resume_data["about"].summary if resume_data["about"] else ""
-    projects = "\n".join([f"- {projects.title}: {projects.description}" for projects in resume_data["projects"]])
-    experience = "\n".join([f"- {experience.role} at {experience.company}: {experience.description}" for experience in resume_data["experience"]])
-    education = ', '.join([education.institution for education in resume_data['education']]) if resume_data['education'] else ''
-    skills = ", ".join([skills.name for skills in resume_data["skills"]])
+    elif section == "skills":
+        context = ", ".join([s.name for s in resume_data["skills"]])
 
-    context = f"""
-    About: {about}
-    Projects:
-    {projects}
+    elif section == "experience":
+        context = "\n".join([f" - {e.role} at {e.company}: {e.description} ({e.start_date} to {e.end_date})" for e in resume_data["experience"]])
+
+    elif section == "education":
+        context = "\n".join([f" - {e.degree} in {e.field} from {e.institution} ({e.start_date} to {e.end_date})" for e in resume_data["education"]])
+    
+    else:
+        context = f"""
+    About: {resume_data['about'].summary}
+    Projects: {', '.join([p.title for p in resume_data['projects']])}
     Experience:
-    {experience}
-    Education: {education}
-    Skills: {skills}
+    {resume_data['experience']}
+    Education: {resume_data['education']}
+    Skills: {', '.join([s.name for s in resume_data['skills']])}
     """
+    
     
     prompt = f"""
 You are an AI assistant for Rohit Kumar's portfolio website.
