@@ -29,7 +29,7 @@ export default function Contact() {
         </a>
 
         <a
-          href="https://linkedin.com"
+          href="https://linkedin.com/rohitkumar010/"
           className="border border-white/20 px-4 py-2 rounded hover:border-white"
         >
           LinkedIn

@@ -14,7 +14,17 @@ function App() {
   const [data, setData] = useState<ResumeData | null>(null)
 
   useEffect(() => {
-    fetchResume().then(setData)
+    let mounted = true
+    fetchResume().then(data => {
+      if(!mounted) return
+      setData(data)
+    }).catch(err => {
+      console.error(err)
+    })
+  
+    return () => {
+      mounted = false
+    }
   }, [])
 
   if(!data) {
@@ -28,10 +38,10 @@ function App() {
   return (
    <div>
     {data?.about && <Hero about={data.about} />}
-    <Projects projects={data.projects} />
-    <Skills skills={data.skills} />
-    <Experience experience={data.experience} />
-    <Contact />
+    {data?.projects && <Projects projects={data.projects} />}
+    {data?.skills && <Skills skills={data.skills} />}
+    {data?.experience && <Experience experience={data.experience} />}
+    <Contact />             
     <ChatWidget />
    </div>
   )

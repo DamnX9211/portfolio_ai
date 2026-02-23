@@ -85,5 +85,12 @@ def run_seed():
      db.commit()
      print("Database seeded successfully.")
 
+     existing = db.query(About).first()
+
+     if(existing):
+         print("Data already exists. Skipping seeding.")
+         return
+     
+
 if __name__ == "__main__":
      run_seed()     

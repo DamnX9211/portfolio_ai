@@ -17,6 +17,7 @@ export default function Projects({ projects }: Props) {
             <p className="text-sm text-gray-500">
               {project.tech_stack}
             </p>
+            
           </div>
         ))}
       </div>
