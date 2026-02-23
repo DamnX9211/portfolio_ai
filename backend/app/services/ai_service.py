@@ -8,6 +8,9 @@ OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 def detect_section(question: str):
     q = question.lower()
 
+    if "project" in q and ("explain" in q or "architecture" in q or "detail" in q):
+        return "project_detail"
+    
     if "project" in q:
         return "projects"
     
@@ -17,9 +20,6 @@ def detect_section(question: str):
     if "experience" in q or "work" in q:
         return "experience"
     
-    if "education" in q:
-        return "education"
-    
     return "general"
 
 async def generate_ai_response(question: str, db: Session):
@@ -28,6 +28,18 @@ async def generate_ai_response(question: str, db: Session):
     
     if section == "projects":
         context = "\n".join([f" - {p.title}: {p.description}" for p in resume_data["projects"]])
+
+    elif section == "project_detail":
+        context = "\n".join(
+        [
+            f"""
+Project: {p.title}
+Description: {p.description}
+Tech Stack: {p.tech_stack}
+""" 
+               for p in resume_data["projects"]
+        ]
+    )    
 
     elif section == "skills":
         context = ", ".join([s.name for s in resume_data["skills"]])
@@ -56,14 +68,12 @@ Your job is to answer questions about Rohit's background based ONLY on the resum
 
 Rules:
 - Answer clearly and professionally.
-- Do NOT say "based on the provided resume".
-- Answer naturally like a human describing Rohit's work.
-- When describing projects, explain architecture and technologies.
+- When describing projects, explain architecture and technologies but in shorter way don't use much words.
 - When listing technical skills or features, do not use inline sentences. Use a clean Markdown hierarchy with bold headers and bullet points. Ensure there is a line break between different categories.
+- Use bullet points where helpful.
 - Do not mention the resume directly.
-- If the information is not available, say "That information is not available in Rohit's resume."
 
-RESUME DATA:
+Resume Data:
 {context}
 
 User Question:

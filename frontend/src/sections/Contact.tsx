@@ -34,6 +34,12 @@ export default function Contact() {
         >
           LinkedIn
         </a>
+        <a
+          href="/resume.pdf"
+          className="border border-white/20 px-4 py-2 rounded hover:border-white"
+        >
+          Download Resume
+        </a>
 
       </div>
 

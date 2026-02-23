@@ -9,9 +9,9 @@ interface Message {
 const suggestedQuestions = [
   "What backend technologies does Rohit use?",
   "Tell me about Rohit's projects",
-  "What experience does Rohit have?",
-  "What kind of roles is Rohit looking for?",
-];
+  "Explain the architecture of Rohit's Car Rental Platform",
+  "What experience does Rohit have?"
+]
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
