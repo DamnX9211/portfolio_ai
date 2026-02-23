@@ -4,6 +4,7 @@ from app.models import about, education, experience, skill, project
 from app.routes import resume_routes
 from app.routes import chat_routes
 from fastapi.middleware.cors import CORSMiddleware
+from seed_resume import run_seed
 
 Base.metadata.create_all(bind=engine)
 
@@ -30,3 +31,4 @@ app.include_router(chat_routes.router, prefix="/api")
 def root():
     return {"message": "Portfolio Ai Backend Running"}
 
+run_seed()
